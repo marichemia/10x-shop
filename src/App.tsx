@@ -1,33 +1,44 @@
 
+import { BrowserRouter, Routes, Route } from 'react-router'
+import Layout from './components/layout/Layout'
+
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="bg-white px-8 py-5 shadow-sm">
-        <h1 className="text-2xl font-bold text-indigo-600">
-          10X Shop
-        </h1>
-      </header>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route
+            path="/"
+            element={<h1 className="text-3xl font-bold">Catalog</h1>}
+          />
 
-      <main className="mx-auto max-w-5xl px-6 py-16">
-        <h2 className="text-4xl font-bold">
-          Welcome to 10X Shop!
-        </h2>
+          <Route
+            path="/login"
+            element={<h1 className="text-3xl font-bold">Login</h1>}
+          />
 
-        <p className="mt-4 text-lg text-slate-600">
-          Our online store is coming to life.
-        </p>
+          <Route
+            path="/cart"
+            element={<h1 className="text-3xl font-bold">Your Cart</h1>}
+          />
 
-        <div className="mt-8 rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h3 className="text-xl font-semibold">
-            Our Products
-          </h3>
+          <Route
+            path="/checkout"
+            element={<h1 className="text-3xl font-bold">Checkout</h1>}
+          />
 
-          <p className="mt-2 text-slate-500">
-            Products will appear here soon!
-          </p>
-        </div>
-      </main>
-    </div>
+          <Route
+            path="/products/:id"
+            element={<h1 className="text-3xl font-bold">Product Details</h1>}
+          />
+
+          <Route
+            path="*"
+            element={<h1 className="text-3xl font-bold">Page not found</h1>}
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

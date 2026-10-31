@@ -1,6 +1,7 @@
 
 import { BrowserRouter, Routes, Route } from 'react-router'
 import Layout from './components/layout/Layout'
+import CatalogPage from './pages/CatalogPage'
 
 function App() {
   return (
@@ -9,7 +10,7 @@ function App() {
         <Route element={<Layout />}>
           <Route
             path="/"
-            element={<h1 className="text-3xl font-bold">Catalog</h1>}
+            element={<CatalogPage />}
           />
 
           <Route

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import type { Product, ProductsResponse } from '../types/product'
-import ProductCard from '../components/product/ProductCard'
+import ProductGrid from '../components/product/ProductGrid'
 
 function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -57,11 +57,7 @@ function CatalogPage() {
       )}
 
       {!loading && !error && products.length > 0 && (
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <ProductGrid products={products} />
       )}
     </section>
   )

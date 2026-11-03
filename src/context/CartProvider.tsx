@@ -12,20 +12,24 @@ interface CartProviderProps {
 function CartProvider({ children }: CartProviderProps) {
   const [items, setItems] = useState<CartItem[]>([])
 
-  function addItem(product: Product) {
-    setItems((currentItems) => {
-      if (product.stock <= 0) return currentItems
+  
+  function addItem(product: Product, quantity = 1) {
+    if (product.stock <= 0 || quantity < 1) return
 
-      const existing = currentItems.find(
+    setItems((currentItems) => {
+      const existingItem = currentItems.find(
         (item) => item.productId === product.id
       )
 
-      if (existing) {
+      if (existingItem) {
         return currentItems.map((item) =>
           item.productId === product.id
             ? {
                 ...item,
-                quantity: Math.min(item.quantity + 1, item.stock),
+                quantity: Math.min(
+                  item.stock,
+                  item.quantity + quantity
+                ),
               }
             : item
         )
@@ -40,11 +44,12 @@ function CartProvider({ children }: CartProviderProps) {
           price: product.price,
           discountPercentage: product.discountPercentage,
           stock: product.stock,
-          quantity: 1,
+          quantity: Math.min(quantity, product.stock),
         },
       ]
     })
   }
+
 
   function removeItem(productId: number) {
     setItems((currentItems) =>

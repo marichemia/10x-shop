@@ -12,6 +12,7 @@ function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [loadedId, setLoadedId] = useState('')
   const [error, setError] = useState('')
+  const [quantity, setQuantity] = useState(1)
 
   const validId = id !== undefined && /^[1-9]\d*$/.test(id)
 
@@ -85,6 +86,15 @@ function ProductPage() {
     return <p>Product not found.</p>
   }
 
+  
+  const inCart =
+    cart.items.find((item) => item.productId === product.id)?.quantity ?? 0
+
+  const remainingStock = Math.max(0, product.stock - inCart)
+
+  const selectedQuantity = Math.min(quantity, remainingStock)
+
+
   return (
     <section>
       <Link to="/" className="text-indigo-600 hover:underline">
@@ -140,19 +150,61 @@ function ProductPage() {
               : 'Out of stock'}
           </p>
 
-          <button
-            type="button"
-            onClick={() => cart.addItem(product)}
-            disabled={
-              product.stock === 0 ||
-              (cart.items.find(
-                (item) => item.productId === product.id
-              )?.quantity ?? 0) >= product.stock
-            }
-            className="mt-6 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Add to Cart
-          </button>
+          
+  <div className="mt-6 space-y-4">
+    {remainingStock > 0 && (
+      <div className="flex items-center gap-4">
+        <span className="font-medium">Quantity:</span>
+
+        <button
+          type="button"
+          onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+          disabled={selectedQuantity <= 1}
+          className="rounded border px-3 py-2 disabled:opacity-40"
+        >
+          −
+        </button>
+
+        <span className="min-w-6 text-center font-semibold">
+          {selectedQuantity}
+        </span>
+
+        <button
+          type="button"
+          onClick={() =>
+            setQuantity((q) => Math.min(remainingStock, q + 1))
+          }
+          disabled={selectedQuantity >= remainingStock}
+          className="rounded border px-3 py-2 disabled:opacity-40"
+        >
+          +
+        </button>
+      </div>
+  )}
+
+  <button
+    type="button"
+    onClick={() => {
+      cart.addItem(product, selectedQuantity)
+      setQuantity(1)
+    }}
+    disabled={remainingStock === 0}
+    className="rounded-lg bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
+  >
+    {product.stock === 0
+      ? 'Out of stock'
+      : remainingStock === 0
+        ? 'Stock limit reached'
+        : `Add ${selectedQuantity} to Cart`}
+  </button>
+
+  {inCart > 0 && (
+    <p className="text-sm text-slate-500">
+      In cart: {inCart}
+    </p>
+  )}
+</div>
+
 
           <p className="mt-3 text-sm text-slate-600">
             In cart: {

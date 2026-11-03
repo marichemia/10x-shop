@@ -107,14 +107,19 @@ function CartPage() {
 
             </div>
           ))}
+          
+        <button
+          type="button"
+          onClick={() => {
+            if (window.confirm('Are you sure you want to clear your cart?')) {
+              cart.clearCart()
+            }
+          }}
+          className="text-sm text-red-600 hover:underline"
+        >
+          Clear cart
+        </button>
 
-          <button
-            type="button"
-            onClick={() => cart.clearCart()}
-            className="text-sm text-red-600 hover:underline"
-          >
-            Clear cart
-          </button>
         </div>
 
         <div className="h-fit rounded-xl bg-white p-6 shadow-sm">

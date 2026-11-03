@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from 'react'
 import { Link, useParams } from 'react-router'
 import type { Product } from '../types/product'
 import { CartContext } from '../context/CartContext'
+import { discountedPrice, formatPrice } from '../utils/format'
 
 function ProductPage() {
   const { id } = useParams()
@@ -108,9 +109,26 @@ function ProductPage() {
             {product.title}
           </h1>
 
-          <p className="mt-4 text-2xl font-semibold text-indigo-600">
-            ${product.price}
-          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <span className="text-2xl font-semibold text-indigo-600">
+              {formatPrice(
+                discountedPrice(product.price, product.discountPercentage)
+              )}
+            </span>
+
+            {product.discountPercentage >= 1 && (
+              <>
+                <span className="text-slate-400 line-through">
+                  {formatPrice(product.price)}
+                </span>
+
+                <span className="font-medium text-green-600">
+                  -{Math.round(product.discountPercentage)}%
+                </span>
+              </>
+            )}
+          </div>
+
 
           <p className="mt-4 text-slate-600">
             {product.description}

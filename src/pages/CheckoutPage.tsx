@@ -3,6 +3,7 @@ import { useContext, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate } from 'react-router'
 import { CartContext } from '../context/CartContext'
+import { discountedPrice, formatPrice } from '../utils/format'
 
 function CheckoutPage() {
   const cart = useContext(CartContext)
@@ -27,10 +28,14 @@ function CheckoutPage() {
     throw new Error('CartProvider is missing')
   }
 
+  
   const total = cart.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) =>
+      sum +
+      discountedPrice(item.price, item.discountPercentage) * item.quantity,
     0
   )
+
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -73,7 +78,7 @@ function CheckoutPage() {
         </p>
 
         <p className="mt-4 font-semibold">
-          Order total: ${orderTotal.toFixed(2)}
+          Order total: {formatPrice(orderTotal)}
         </p>
 
         <Link
@@ -187,7 +192,7 @@ function CheckoutPage() {
           <div className="mt-6 flex justify-between">
             <span>Total</span>
             <span className="font-bold">
-              ${total.toFixed(2)}
+              {formatPrice(total)}
             </span>
           </div>
         </aside>

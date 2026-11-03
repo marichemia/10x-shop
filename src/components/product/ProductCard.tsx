@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router'
 import type { Product } from '../../types/product'
+import { discountedPrice, formatPrice } from '../../utils/format'
 
 interface ProductCardProps {
   product: Product
@@ -23,9 +24,27 @@ function ProductCard({ product }: ProductCardProps) {
         {product.title}
       </h2>
 
-      <p className="mt-2 text-indigo-600">
-        ${product.price}
-      </p>
+      
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <span className="font-semibold text-indigo-600">
+          {formatPrice(
+            discountedPrice(product.price, product.discountPercentage)
+          )}
+        </span>
+
+        {product.discountPercentage >= 1 && (
+          <>
+            <span className="text-sm text-slate-400 line-through">
+              {formatPrice(product.price)}
+            </span>
+
+            <span className="text-xs font-medium text-green-600">
+              -{Math.round(product.discountPercentage)}%
+            </span>
+          </>
+        )}
+      </div>
+
     </Link>
   )
 }

@@ -2,6 +2,7 @@
 import { useContext } from 'react'
 import { Link } from 'react-router'
 import { CartContext } from '../context/CartContext'
+import { discountedPrice, formatPrice } from '../utils/format'
 
 function CartPage() {
   const cart = useContext(CartContext)
@@ -10,10 +11,14 @@ function CartPage() {
     throw new Error('CartProvider is missing')
   }
 
+  
   const subtotal = cart.items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      total +
+      discountedPrice(item.price, item.discountPercentage) * item.quantity,
     0
   )
+
 
   if (cart.items.length === 0) {
     return (
@@ -54,7 +59,9 @@ function CartPage() {
                 </Link>
 
                 <p className="mt-2 text-slate-600">
-                  ${item.price.toFixed(2)}
+                  {formatPrice(
+                    discountedPrice(item.price, item.discountPercentage)
+                  )}
                 </p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -93,8 +100,11 @@ function CartPage() {
               </div>
 
               <p className="font-semibold">
-                ${(item.price * item.quantity).toFixed(2)}
+                {formatPrice(
+                  discountedPrice(item.price, item.discountPercentage) * item.quantity
+                )}
               </p>
+
             </div>
           ))}
 
@@ -112,12 +122,12 @@ function CartPage() {
 
           <div className="mt-6 flex justify-between">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{formatPrice(subtotal)}</span>
           </div>
 
           <div className="mt-4 flex justify-between border-t pt-4 font-bold">
             <span>Total</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{formatPrice(subtotal)}</span>
           </div>
 
           <Link

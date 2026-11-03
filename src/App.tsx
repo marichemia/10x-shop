@@ -8,6 +8,7 @@ import CartPage from './pages/CartPage'
 import AuthProvider from './context/AuthProvider'
 import LoginPage from './pages/LoginPage'
 import ProtectedRoute from './routes/ProtectedRoute'
+import CheckoutPage from './pages/CheckoutPage'
 
 function App() {
   return (
@@ -33,9 +34,9 @@ function App() {
 
               
               <Route element={<ProtectedRoute />}>
-                <Route
+                <Route 
                   path="/checkout"
-                  element={<h1 className="text-3xl font-bold">Checkout</h1>}
+                  element={<CheckoutPage />} 
                 />
               </Route>
 

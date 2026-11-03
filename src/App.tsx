@@ -9,50 +9,36 @@ import AuthProvider from './context/AuthProvider'
 import LoginPage from './pages/LoginPage'
 import ProtectedRoute from './routes/ProtectedRoute'
 import CheckoutPage from './pages/CheckoutPage'
+import ErrorBoundary from './components/ErrorBoundary'
+import NotFoundPage from './pages/NotFoundPage'
+
 
 function App() {
   return (
     <BrowserRouter>
-      <CartProvider>
-         <AuthProvider>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route
-                path="/"
-                element={<CatalogPage />}
-              />
+      <ErrorBoundary>
+        <CartProvider>
+          <AuthProvider>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/" element={<CatalogPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/products/:id" element={<ProductPage />} />
 
-              <Route
-                path="/login"
-                element={<LoginPage />}
-              />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                </Route>
 
-              <Route
-                path="/cart"
-                element={<CartPage />}
-              />
-
-              
-              <Route element={<ProtectedRoute />}>
-                <Route 
-                  path="/checkout"
-                  element={<CheckoutPage />} 
-                />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
-
-
-              <Route path="/products/:id" element={<ProductPage />} />
-
-              <Route
-                path="*"
-                element={<h1 className="text-3xl font-bold">Page not found</h1>}
-              />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </CartProvider>
+            </Routes>
+          </AuthProvider>
+        </CartProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }
+
 
 export default App

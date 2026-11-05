@@ -1,9 +1,11 @@
 
 import { useEffect, useState, useContext } from 'react'
 import { Link, useParams } from 'react-router'
-import type { Product } from '../types/product'
+import type { Product, ProductsResponse } from '../types/product'
+import ProductGrid from '../components/product/ProductGrid'
 import { CartContext } from '../context/CartContext'
 import { discountedPrice, formatPrice } from '../utils/format'
+
 
 function ProductPage() {
   const { id } = useParams()
@@ -13,6 +15,10 @@ function ProductPage() {
   const [loadedId, setLoadedId] = useState('')
   const [error, setError] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [related, setRelated] = useState<{
+  productId: number
+  products: Product[]
+} | null>(null)
 
   const validId = id !== undefined && /^[1-9]\d*$/.test(id)
 
@@ -57,6 +63,49 @@ function ProductPage() {
 
     return () => controller.abort()
   }, [id, validId])
+
+  useEffect(() => {
+  if (!product || loadedId !== id) return
+
+  const currentProduct = product
+
+  const controller = new AbortController()
+
+  async function fetchRelated() {
+    try {
+      const response = await fetch(
+        `https://dummyjson.com/products/category/${encodeURIComponent(currentProduct.category)}?limit=5`,
+        { signal: controller.signal }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to load related products')
+      }
+
+      const data: ProductsResponse = await response.json()
+
+      if (!controller.signal.aborted) {
+        setRelated({
+          productId: currentProduct.id,
+          products: data.products
+            .filter((item) => item.id !== currentProduct.id)
+            .slice(0, 4)
+        })
+      }
+    } catch {
+      if (!controller.signal.aborted) {
+        setRelated({
+          productId: currentProduct.id,
+          products: []
+        })
+      }
+    }
+  }
+
+  void fetchRelated()
+
+  return () => controller.abort()
+}, [id, loadedId, product])
   
   if (!cart) {
       throw new Error('CartProvider is missing')
@@ -216,6 +265,16 @@ function ProductPage() {
 
         </div>
       </div>
+      {related?.productId === product.id &&
+        related.products.length > 0 && (
+        <div className="mt-12">
+          <h2 className="mb-6 text-2xl font-bold">
+            Related Products
+          </h2>
+
+          <ProductGrid products={related.products} />
+        </div>
+      )}
     </section>
   )
 }

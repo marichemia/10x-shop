@@ -87,7 +87,7 @@ npm run build
 
 ## Live demo
 
-[]
+https://10x-shop-mariamchemia.netlify.app
 
 ## Limitations
 
